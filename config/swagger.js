@@ -11,7 +11,7 @@ const options = {
         },
         servers: [
             {
-                url: 'http://localhost:3500', // Change based on your environment
+                url: 'https://e-store-api-57kb.onrender.com', // Change based on your environment
             },
         ],
         components: {
