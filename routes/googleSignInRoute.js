@@ -5,3 +5,6 @@ const googleSignIn = require('../controllers/googleSignInController')
 
 
 router.post('/', googleSignIn)
+
+
+module.exports = router;
