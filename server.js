@@ -26,6 +26,7 @@ app.use(cookieParser());
 app.use('/',express.static(path.join(__dirname, 'public')));
 app.use('/', require('./routes/root'));
 app.use('/auth', require('./routes/authRoutes'));
+app.use('/googleSignIn', require('./routes/googleSignInRoute'))
 app.use('/users', require('./routes/userRoutes'));
 // 404
 app.all('*',(req, res)=>{
