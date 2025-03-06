@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const asyncHandler = require('express-async-handler');
+const jwt = require('jsonwebtoken')
 
 const googleSignIn = asyncHandler(async (req, res)=>{
     const {username, email, profilePic} = req.body;
