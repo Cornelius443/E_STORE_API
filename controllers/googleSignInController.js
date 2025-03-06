@@ -32,7 +32,7 @@ const googleSignIn = asyncHandler(async (req, res)=>{
                 email: duplicate.email,
                 roles: duplicate.roles,
             };
-            res.status(201).json({user, accessToken, refreshToken})
+           return res.status(201).json({user, accessToken, refreshToken})
         }
         const userObject = { username, email }
         const newUser = await User.create(userObject);
@@ -59,14 +59,13 @@ const googleSignIn = asyncHandler(async (req, res)=>{
             email: newUser.email,
             roles: newUser.roles,
         };
-        res.status(201).json({user, accessToken, refreshToken})
+        return res.status(201).json({user, accessToken, refreshToken})
         }else{
-            res.status(400).json({message: 'Invalid user data received'});
+            return res.status(400).json({message: 'Invalid user data received'});
         }
     
     }catch(e){
-        res.status(500).json({'message': e.message});
-        console.log(e)
+       return res.status(500).json({'message': e.message});
     }
     })
 
