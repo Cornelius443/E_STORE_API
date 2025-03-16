@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router();
 const usersController = require('../controllers/userController');
 const verifyJWT = require('../middleware/verifyJwt')
+const upload = require('../middleware/multer')
 /**
  * @swagger
  * tags:
@@ -127,4 +128,9 @@ router.post('/', usersController.createNewUser);
 router.get('/user', verifyJWT, usersController.getUser);
 
 
-module.exports = router;
+router.patch('/upload', upload.single('profilePic'), verifyJWT, usersController.updateProfilePic);
+
+
+router.patch('/update', verifyJWT, usersController.updateUser);
+
+module.exports = router; 

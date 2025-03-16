@@ -2,6 +2,8 @@ const User = require('../models/User');
 const asyncHandler = require('express-async-handler');
 const jwt = require('jsonwebtoken')
 
+
+
 const googleSignIn = asyncHandler(async (req, res)=>{
     const {username, email, profilePic} = req.body;
     if(!username || !email){
@@ -30,11 +32,14 @@ const googleSignIn = asyncHandler(async (req, res)=>{
                 id: duplicate._id,
                 username: duplicate.username,
                 email: duplicate.email,
-                roles: duplicate.roles,
+                profilePic: duplicate.profilePic,
+                roles: duplicate.roles, 
             };
            return res.status(201).json({user, accessToken, refreshToken})
         }
-        const userObject = { username, email }
+        const userObject = (!profilePic)
+        ? { username, email }
+        : { username, email, profilePic }
         const newUser = await User.create(userObject);
         if(newUser)
         {    const accessToken = jwt.sign(
@@ -57,6 +62,7 @@ const googleSignIn = asyncHandler(async (req, res)=>{
             id: newUser._id,
             username: newUser.username,
             email: newUser.email,
+            profilePic: newUser.profilePic,
             roles: newUser.roles,
         };
         return res.status(201).json({user, accessToken, refreshToken})

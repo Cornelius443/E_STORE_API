@@ -14,6 +14,11 @@ const userSchema = new mongoose.Schema({
         trim: true,
         validate: [validator.isEmail,"Please enter a valid email address" ]
     },
+    profilePic:{
+        type: String,
+        default: ""
+
+    },
     password: {
         type: String,
         required: false

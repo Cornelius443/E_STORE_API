@@ -21,6 +21,7 @@ connectDB();
 app.use(logger);
 app.use(cors(corsOptions));
 // built in middleware for json
+app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use(cookieParser());
 app.use('/',express.static(path.join(__dirname, 'public')));
@@ -28,6 +29,7 @@ app.use('/', require('./routes/root'));
 app.use('/auth', require('./routes/authRoutes'));
 app.use('/googleSignIn', require('./routes/googleSignInRoute'))
 app.use('/users', require('./routes/userRoutes'));
+app.use('/product', require('./routes/productRoutes'))
 // 404
 app.all('*',(req, res)=>{
     res.status(404);

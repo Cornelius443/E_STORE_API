@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const asyncHandler = require('express-async-handler');
 const bcrypt = require('bcryptjs') 
-
+const cloudinary = require('../utils/cloudinary')
 
 // get all users
 // route Get /users
@@ -60,4 +60,65 @@ const createNewUser = asyncHandler(async (req, res)=>{
     }
 })
 
-module.exports ={getAllUsers, createNewUser, getUser}
+// Update a user
+// route PATCH /users
+// @access private
+const updateUser = asyncHandler(async (req, res)=>{
+    const {username, email,} = req.body;
+    //confirm data
+    if(!username || !email){
+       return res.status(400).json({message: 'All fields are required'});
+    }
+    try{
+       let user = await User.findOne({ username, email }).exec() 
+       if(!user) return res.status(400).json({message: 'User not found'});
+       user.username = username;
+       user.email = email;
+       const updatedUser = await user.save();
+       res.json({message: `${updatedUser.username} updated`});
+    }catch(e){
+       res.status(500).json({'message': e.message});
+    }
+   })
+
+   const updateProfilePic = asyncHandler(async (req, res)=>{
+    if (!req.user) return res.status(401).json({ message: 'Unauthorized - No user found' });
+    if (!req.file) return res.status(400).json({ message: 'Image required' });
+    try{
+       let user = await User.findOne({ username: req.user }).exec();
+       if(!user) return res.status(400).json({message: 'User not found'});
+       
+           if (user.profilePic) {
+            const publicId = user.profilePic.split('/').pop().split('.')[0]; 
+            await cloudinary.uploader.destroy(`user_profiles/${publicId}`);
+        }
+       const imageUrl = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+            { folder: "user_profiles" },
+            (error, uploadResult) => {
+                if (error) {
+                    console.error("Cloudinary Upload Error:", error);
+                    return reject(new Error("Cloudinary upload failed"));
+                }
+                resolve(uploadResult.secure_url);
+            }
+        );
+        stream.end(req.file.buffer);
+    });
+  
+    user.profilePic = imageUrl;
+    const updatedUser = await user.save();
+    res.json({ message: `${updatedUser.username} updated`, user: updatedUser });
+    }catch(e){
+        console.log(e)
+       res.status(500).json({'message': e.message});
+    }
+   })
+
+
+module.exports ={getAllUsers, createNewUser, getUser, updateUser, updateProfilePic}
+
+
+
+
+
